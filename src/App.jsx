@@ -1,45 +1,164 @@
 import { useState } from 'react';
 import PeriodicElement from './components/PeriodicElement';
+import { elements, categories, categoryColors } from './data/elements';
 
 function App() {
-  const [selectedElement, setSelectedElement] = useState(null);
-  
-  const elements = [
-    { symbol: 'H', name: 'Hydrogen', atomicNumber: 1, atomicMass: '1.008', category: 'nonmetal' },
-    { symbol: 'He', name: 'Helium', atomicNumber: 2, atomicMass: '4.003', category: 'noble-gas' },
-    { symbol: 'Li', name: 'Lithium', atomicNumber: 3, atomicMass: '6.941', category: 'alkali-metal' },
-    { symbol: 'Be', name: 'Beryllium', atomicNumber: 4, atomicMass: '9.012', category: 'alkaline-earth' },
-    { symbol: 'C', name: 'Carbon', atomicNumber: 6, atomicMass: '12.01', category: 'nonmetal' },
-    { symbol: 'N', name: 'Nitrogen', atomicNumber: 7, atomicMass: '14.01', category: 'nonmetal' },
-    { symbol: 'O', name: 'Oxygen', atomicNumber: 8, atomicMass: '16.00', category: 'nonmetal' },
-    { symbol: 'F', name: 'Fluorine', atomicNumber: 9, atomicMass: '19.00', category: 'halogen' },
-  ];
+  const [selected, setSelected] = useState(null);
+  const [filter, setFilter] = useState('all');
+
+  const mainElements = elements.filter(el => !el.series);
+  const lanthanides = elements.filter(el => el.series === 'lanthanide');
+  const actinides = elements.filter(el => el.series === 'actinide');
+
+  const getElementAt = (period, group) =>
+    mainElements.find(el => el.period === period && el.group === group);
+
+  const isVisible = (el) => filter === 'all' || el.category === filter;
+
+  const renderCell = (period, group) => {
+    const el = getElementAt(period, group);
+
+    if ((period === 6 || period === 7) && group === 3) {
+      return (
+        <div
+          key={`${period}-${group}`}
+          className="w-20 h-20 border-2 border-dashed border-gray-400 rounded-sm flex flex-col items-center justify-center cursor-default"
+        >
+          <span className="text-xs text-gray-500 font-semibold">
+            {period === 6 ? '57-71' : '89-103'}
+          </span>
+          <span className="text-xs text-gray-400">
+            {period === 6 ? 'Lanthanides' : 'Actinides'}
+          </span>
+        </div>
+      );
+    }
+
+    if (el && isVisible(el)) {
+      return (
+        <PeriodicElement
+          key={el.atomicNumber}
+          symbol={el.symbol}
+          name={el.name}
+          atomicNumber={el.atomicNumber}
+          atomicMass={el.atomicMass}
+          category={el.category}
+          onClick={() => setSelected(el)}
+        />
+      );
+    }
+
+    return <div key={`${period}-${group}`} className="w-20 h-20" />;
+  };
+
+  const renderRow = (period) => {
+    const cells = [];
+    for (let group = 1; group <= 18; group++) {
+      cells.push(renderCell(period, group));
+    }
+    return (
+      <div key={`row-${period}`} className="flex gap-1">
+        {cells}
+      </div>
+    );
+  };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">Periodic Table</h1>
-      
-      <div className="flex flex-wrap gap-4 mb-8">
-        {elements.map((element) => (
-          <PeriodicElement
-            key={element.atomicNumber}
-            {...element}
-            onClick={() => setSelectedElement(element)}
-          />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold text-gray-900 mb-1">Periodic Table of Elements</h1>
+      <p className="text-gray-500 mb-4 text-sm">Click an element to view details. Use filters to highlight categories.</p>
+
+      <div className="flex flex-wrap gap-2 mb-6">
+        {categories.map(cat => (
+          <button
+            key={cat.key}
+            onClick={() => setFilter(cat.key)}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+              filter === cat.key
+                ? 'bg-blue-600 text-white'
+                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            {cat.label}
+          </button>
         ))}
       </div>
-      
-      {selectedElement && (
-        <div className="bg-white p-6 rounded-lg shadow-md max-w-md">
-          <h2 className="text-2xl font-bold mb-4">{selectedElement.name}</h2>
+
+      <div className="overflow-x-auto">
+        <div className="inline-block">
+          <div className="flex flex-col gap-1">
+            {[1, 2, 3, 4, 5, 6, 7].map(period => renderRow(period))}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-1">
+            <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Lanthanides (71)</div>
+            <div className="flex gap-1">
+              {lanthanides.filter(el => isVisible(el)).map(el => (
+                <PeriodicElement
+                  key={el.atomicNumber}
+                  symbol={el.symbol}
+                  name={el.name}
+                  atomicNumber={el.atomicNumber}
+                  atomicMass={el.atomicMass}
+                  category={el.category}
+                  onClick={() => setSelected(el)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-2 flex flex-col gap-1">
+            <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Actinides (103)</div>
+            <div className="flex gap-1">
+              {actinides.filter(el => isVisible(el)).map(el => (
+                <PeriodicElement
+                  key={el.atomicNumber}
+                  symbol={el.symbol}
+                  name={el.name}
+                  atomicNumber={el.atomicNumber}
+                  atomicMass={el.atomicMass}
+                  category={el.category}
+                  onClick={() => setSelected(el)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {selected && (
+        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg max-w-md">
+          <div className="flex justify-between items-start mb-4">
+            <h2 className="text-2xl font-bold text-gray-900">{selected.name}</h2>
+            <button
+              onClick={() => setSelected(null)}
+              className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            >
+              8957
+            </button>
+          </div>
           <div className="space-y-2 text-gray-700">
-            <p><span className="font-semibold">Symbol:</span> {selectedElement.symbol}</p>
-            <p><span className="font-semibold">Atomic Number:</span> {selectedElement.atomicNumber}</p>
-            <p><span className="font-semibold">Atomic Mass:</span> {selectedElement.atomicMass}</p>
-            <p><span className="font-semibold">Category:</span> {selectedElement.category.replace('-', ' ')}</p>
+            <p><span className="font-semibold">Symbol:</span> {selected.symbol}</p>
+            <p><span className="font-semibold">Atomic Number:</span> {selected.atomicNumber}</p>
+            <p><span className="font-semibold">Atomic Mass:</span> {selected.atomicMass}</p>
+            <p><span className="font-semibold">Category:</span> {selected.category.replace('-', ' ')}</p>
+            <p><span className="font-semibold">Period:</span> {selected.period}</p>
+            {selected.group && <p><span className="font-semibold">Group:</span> {selected.group}</p>}
           </div>
         </div>
       )}
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-xl font-bold mb-4 text-gray-900">Element Categories</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {categories.slice(1).map(cat => (
+            <div key={cat.key} className="flex items-center gap-2">
+              <div className={`w-6 h-6 border-2 rounded ${categoryColors[cat.key]}`}></div>
+              <span className="text-sm text-gray-700">{cat.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
