@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PeriodicElement from './components/PeriodicElement';
 import { elements, categories, categoryColors } from './data/elements';
 
@@ -6,6 +6,8 @@ function App() {
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
+  const [hasMatchesBelowFold, setHasMatchesBelowFold] = useState(false);
+  const lanthanidesRef = useRef(null);
 
   const mainElements = elements.filter(el => !el.series);
   const lanthanides = elements.filter(el => el.series === 'lanthanide');
@@ -25,6 +27,39 @@ function App() {
   };
 
   const isVisible = (el) => filter === 'all' || el.category === filter;
+
+  // Check if there are search matches below the viewport
+  useEffect(() => {
+    if (!search.trim()) {
+      setHasMatchesBelowFold(false);
+      return;
+    }
+
+    const matchingLanthanides = lanthanides.filter(el => isVisible(el) && matchesSearch(el));
+    const matchingActinides = actinides.filter(el => isVisible(el) && matchesSearch(el));
+    const hasMatchesInLowerSections = matchingLanthanides.length > 0 || matchingActinides.length > 0;
+
+    if (!hasMatchesInLowerSections) {
+      setHasMatchesBelowFold(false);
+      return;
+    }
+
+    const checkVisibility = () => {
+      if (lanthanidesRef.current) {
+        const rect = lanthanidesRef.current.getBoundingClientRect();
+        setHasMatchesBelowFold(rect.top > window.innerHeight);
+      }
+    };
+
+    checkVisibility();
+    window.addEventListener('scroll', checkVisibility);
+    window.addEventListener('resize', checkVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', checkVisibility);
+      window.removeEventListener('resize', checkVisibility);
+    };
+  }, [search, filter]);
 
   const renderCell = (period, group) => {
     const el = getElementAt(period, group);
@@ -143,7 +178,7 @@ function App() {
             </div>
           )}
 
-          <div className="mt-4 flex flex-col gap-1">
+          <div ref={lanthanidesRef} className="mt-4 flex flex-col gap-1">
             <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Lanthanides (71)</div>
             <div className="flex gap-1">
               {lanthanides.filter(el => isVisible(el)).map(el => (
@@ -182,6 +217,18 @@ function App() {
           </div>
         </div>
       </div>
+
+      {hasMatchesBelowFold && (
+        <button
+          onClick={() => lanthanidesRef.current?.scrollIntoView({ behavior: 'smooth' })}
+          className="fixed bottom-6 right-6 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+        >
+          <span className="text-sm font-medium">More matches below</span>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
