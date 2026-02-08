@@ -5,6 +5,7 @@ import { elements, categories, categoryColors } from './data/elements';
 function App() {
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
 
   const mainElements = elements.filter(el => !el.series);
   const lanthanides = elements.filter(el => el.series === 'lanthanide');
@@ -12,6 +13,16 @@ function App() {
 
   const getElementAt = (period, group) =>
     mainElements.find(el => el.period === period && el.group === group);
+
+  const matchesSearch = (el) => {
+    if (!search.trim()) return true;
+    return el.name.toLowerCase().startsWith(search.toLowerCase());
+  };
+
+  const isHighlighted = (el) => {
+    if (!search.trim()) return false;
+    return el.name.toLowerCase().startsWith(search.toLowerCase());
+  };
 
   const isVisible = (el) => filter === 'all' || el.category === filter;
 
@@ -44,6 +55,8 @@ function App() {
           atomicNumber={el.atomicNumber}
           atomicMass={el.atomicMass}
           category={el.category}
+          highlighted={isHighlighted(el)}
+          dimmed={search.trim() && !matchesSearch(el)}
           onClick={() => setSelected(el)}
         />
       );
@@ -72,7 +85,16 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6" style={tableStyle}>
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Periodic Table of Elements</h1>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-1">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Periodic Table of Elements</h1>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search element..."
+          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-48"
+        />
+      </div>
       <p className="text-gray-500 mb-4 text-xs sm:text-sm">Click an element to view details. Use filters to highlight categories.</p>
 
       <div className="flex flex-wrap gap-2 mb-6">
@@ -130,6 +152,8 @@ function App() {
                   atomicNumber={el.atomicNumber}
                   atomicMass={el.atomicMass}
                   category={el.category}
+                  highlighted={isHighlighted(el)}
+                  dimmed={search.trim() && !matchesSearch(el)}
                   onClick={() => setSelected(el)}
                 />
               ))}
@@ -147,6 +171,8 @@ function App() {
                   atomicNumber={el.atomicNumber}
                   atomicMass={el.atomicMass}
                   category={el.category}
+                  highlighted={isHighlighted(el)}
+                  dimmed={search.trim() && !matchesSearch(el)}
                   onClick={() => setSelected(el)}
                 />
               ))}

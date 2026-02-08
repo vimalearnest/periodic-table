@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
-const PeriodicElement = ({ 
-  symbol, 
-  name, 
-  atomicNumber, 
-  atomicMass, 
+const PeriodicElement = ({
+  symbol,
+  name,
+  atomicNumber,
+  atomicMass,
   category = 'other',
-  onClick 
+  highlighted = false,
+  dimmed = false,
+  onClick
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -32,6 +34,8 @@ const PeriodicElement = ({
         relative border-2 ${colorClass}
         cursor-pointer transition-all duration-200
         ${isHovered ? 'scale-110 shadow-lg z-10' : 'shadow'}
+        ${highlighted ? 'ring-2 ring-blue-500 ring-offset-1' : ''}
+        ${dimmed ? 'opacity-30' : ''}
         flex flex-col items-center justify-center
         rounded-sm overflow-hidden
       `}
