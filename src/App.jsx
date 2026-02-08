@@ -181,6 +181,11 @@ function App() {
                       <div className="text-[0.6rem] text-gray-500 capitalize">{selected.category.replace('-', ' ')}</div>
                     </div>
                   </div>
+                  <div className="border-t border-gray-200 mt-1 pt-1 text-[0.6rem] text-gray-600 space-y-0.5">
+                    <div><span className="text-gray-400">Discovered</span> {selected.discovered || 'Ancient'}</div>
+                    <div><span className="text-gray-400">Melting</span> {selected.meltingPoint != null ? `${selected.meltingPoint}°C` : '—'}</div>
+                    <div><span className="text-gray-400">Boiling</span> {selected.boilingPoint != null ? `${selected.boilingPoint}°C` : '—'}</div>
+                  </div>
                   <div className="border-t border-gray-200 mt-1 pt-1">
                     <a
                       href={`https://en.wikipedia.org/wiki/${selected.name}`}
