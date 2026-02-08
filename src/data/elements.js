@@ -155,3 +155,30 @@ export const categoryColors = {
   'actinide': 'bg-violet-100 border-violet-400',
   'other': 'bg-gray-100 border-gray-400'
 };
+
+// Common compounds for elements (add more as needed)
+export const commonCompounds = {
+  H: ['H₂O', 'H₂SO₄', 'HCl'],
+  Li: ['LiOH', 'Li₂CO₃'],
+  C: ['CO₂', 'CH₄', 'C₆H₁₂O₆'],
+  N: ['NH₃', 'HNO₃', 'N₂O'],
+  O: ['H₂O', 'CO₂', 'O₃'],
+  F: ['HF', 'NaF'],
+  Na: ['NaCl', 'NaOH', 'NaHCO₃'],
+  Mg: ['MgO', 'MgSO₄'],
+  Al: ['Al₂O₃', 'AlCl₃'],
+  Si: ['SiO₂', 'SiC'],
+  P: ['H₃PO₄', 'P₄O₁₀'],
+  S: ['H₂SO₄', 'SO₂', 'H₂S'],
+  Cl: ['NaCl', 'HCl', 'Cl₂O'],
+  K: ['KCl', 'KOH'],
+  Ca: ['CaCO₃', 'CaO', 'Ca(OH)₂'],
+  Fe: ['Fe₂O₃', 'FeCl₃', 'FeS₂'],
+  Cu: ['CuSO₄', 'CuO'],
+  Zn: ['ZnO', 'ZnCl₂'],
+  Ag: ['AgNO₃', 'AgCl'],
+  Au: ['AuCl₃'],
+  Hg: ['HgCl₂', 'HgS'],
+  Pb: ['PbO', 'PbS'],
+  U: ['UO₂', 'UF₆'],
+};

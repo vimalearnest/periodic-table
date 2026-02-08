@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import PeriodicElement from './components/PeriodicElement';
-import { elements, categories, categoryColors } from './data/elements';
+import { elements, categories, categoryColors, commonCompounds } from './data/elements';
 
 function App() {
   const [selected, setSelected] = useState(null);
@@ -136,7 +136,12 @@ function App() {
         {categories.map(cat => (
           <button
             key={cat.key}
-            onClick={() => setFilter(cat.key)}
+            onClick={() => {
+              setFilter(cat.key);
+              if (selected && cat.key !== 'all' && selected.category !== cat.key) {
+                setSelected(null);
+              }
+            }}
             className={`px-3 py-1 rounded-full text-sm font-medium transition-all border-2 ${
               cat.key === 'all'
                 ? filter === 'all'
@@ -157,23 +162,52 @@ function App() {
           </div>
 
           {selected && (
-            <div className="absolute top-0 bg-white p-4 rounded-lg shadow-lg z-20" style={{ left: 'calc(2 * var(--element-size) + 8px)', width: 'calc(10 * var(--element-size) + 36px)' }}>
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{selected.name}</h2>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl leading-none"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-700">
-                <p><span className="font-semibold">Symbol:</span> {selected.symbol}</p>
-                <p><span className="font-semibold">Atomic Number:</span> {selected.atomicNumber}</p>
-                <p><span className="font-semibold">Atomic Mass:</span> {selected.atomicMass}</p>
-                <p><span className="font-semibold">Category:</span> {selected.category.replace('-', ' ')}</p>
-                <p><span className="font-semibold">Period:</span> {selected.period}</p>
-                {selected.group && <p><span className="font-semibold">Group:</span> {selected.group}</p>}
+            <div
+              className={`absolute top-0 p-2 rounded-lg shadow-lg z-20 border-2 ${categoryColors[selected.category]}`}
+              style={{ left: 'calc(5 * var(--element-size) + 16px)', top: 'calc(var(--element-size) + 4px)', backgroundColor: 'white' }}
+            >
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-0.5 right-1.5 text-gray-400 hover:text-gray-600 text-sm leading-none"
+              >
+                ×
+              </button>
+              <div className="flex divide-x divide-gray-300">
+                <div className="pr-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="text-2xl font-bold text-gray-900">{selected.symbol}</div>
+                    <div>
+                      <div className="text-xs font-semibold text-gray-900">{selected.name}</div>
+                      <div className="text-[0.6rem] text-gray-500 capitalize">{selected.category.replace('-', ' ')}</div>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 mt-1 pt-1">
+                    <a
+                      href={`https://en.wikipedia.org/wiki/${selected.name}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[0.6rem] text-blue-600 hover:underline"
+                    >
+                      Wikipedia →
+                    </a>
+                  </div>
+                </div>
+                <div className="px-2 text-xs text-gray-700 flex flex-col justify-center gap-0.5">
+                  <div className="flex justify-between gap-3"><span className="text-gray-400">Atomic Number</span><span className="font-medium">{selected.atomicNumber}</span></div>
+                  <div className="flex justify-between gap-3"><span className="text-gray-400">Atomic Mass</span><span className="font-medium">{selected.atomicMass}</span></div>
+                  <div className="flex justify-between gap-3"><span className="text-gray-400">Period</span><span className="font-medium">{selected.period}</span></div>
+                  {selected.group && <div className="flex justify-between gap-3"><span className="text-gray-400">Group</span><span className="font-medium">{selected.group}</span></div>}
+                </div>
+                <div className="pl-2 text-xs">
+                  <div className="text-gray-400 text-[0.6rem]">Compounds</div>
+                  {commonCompounds[selected.symbol]?.length > 0 ? (
+                    <div className="text-gray-700 font-medium">
+                      {commonCompounds[selected.symbol].slice(0, 3).join(', ')}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400">—</span>
+                  )}
+                </div>
               </div>
             </div>
           )}
