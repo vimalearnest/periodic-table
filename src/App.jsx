@@ -102,10 +102,12 @@ function App() {
           <button
             key={cat.key}
             onClick={() => setFilter(cat.key)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-              filter === cat.key
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-100'
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-all border-2 ${
+              cat.key === 'all'
+                ? filter === 'all'
+                  ? 'bg-gray-700 text-white border-gray-700'
+                  : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100'
+                : `${categoryColors[cat.key]} ${filter === cat.key ? 'ring-2 ring-offset-1 ring-gray-500' : 'hover:opacity-80'}`
             }`}
           >
             {cat.label}
@@ -178,18 +180,6 @@ function App() {
               ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold mb-4 text-gray-900">Element Categories</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {categories.slice(1).map(cat => (
-            <div key={cat.key} className="flex items-center gap-2">
-              <div className={`w-6 h-6 border-2 rounded ${categoryColors[cat.key]}`}></div>
-              <span className="text-sm text-gray-700">{cat.label}</span>
-            </div>
-          ))}
         </div>
       </div>
     </div>
