@@ -27,34 +27,35 @@ const PeriodicElement = ({
   const colorClass = categoryColors[category] || categoryColors['other'];
   
   return (
-    <div 
+    <div
       className={`
-        relative w-20 h-20 border-2 ${colorClass}
+        relative border-2 ${colorClass}
         cursor-pointer transition-all duration-200
         ${isHovered ? 'scale-110 shadow-lg z-10' : 'shadow'}
         flex flex-col items-center justify-center
-        rounded-sm
+        rounded-sm overflow-hidden
       `}
+      style={{ width: 'var(--element-size)', height: 'var(--element-size)' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      <div className="absolute top-0.5 left-1 text-xs font-semibold text-gray-700">
+      <div className="absolute top-0 left-0.5 text-[0.5rem] sm:text-xs font-semibold text-gray-700">
         {atomicNumber}
       </div>
-      
-      <div className="text-2xl font-bold text-gray-900 mt-1">
+
+      <div className="text-sm sm:text-xl md:text-2xl font-bold text-gray-900 mt-1">
         {symbol}
       </div>
-      
-      <div className="text-xs text-gray-700 font-medium">
+
+      <div className="text-[0.4rem] sm:text-xs text-gray-700 font-medium truncate max-w-full px-0.5">
         {name}
       </div>
-      
-      <div className="text-xs text-gray-600 mt-0.5">
+
+      <div className="text-[0.35rem] sm:text-xs text-gray-600 hidden sm:block">
         {atomicMass}
       </div>
-      
+
       {isHovered && (
         <div className="absolute top-full mt-2 bg-gray-900 text-white text-sm px-3 py-2 rounded shadow-lg whitespace-nowrap z-20">
           <div className="font-semibold">{name}</div>

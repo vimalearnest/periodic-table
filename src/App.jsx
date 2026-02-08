@@ -22,12 +22,13 @@ function App() {
       return (
         <div
           key={`${period}-${group}`}
-          className="w-20 h-20 border-2 border-dashed border-gray-400 rounded-sm flex flex-col items-center justify-center cursor-default"
+          className="border-2 border-dashed border-gray-400 rounded-sm flex flex-col items-center justify-center cursor-default"
+          style={{ width: 'var(--element-size)', height: 'var(--element-size)' }}
         >
-          <span className="text-xs text-gray-500 font-semibold">
+          <span className="text-[0.5rem] sm:text-xs text-gray-500 font-semibold">
             {period === 6 ? '57-71' : '89-103'}
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-[0.4rem] sm:text-xs text-gray-400 hidden sm:block">
             {period === 6 ? 'Lanthanides' : 'Actinides'}
           </span>
         </div>
@@ -48,7 +49,7 @@ function App() {
       );
     }
 
-    return <div key={`${period}-${group}`} className="w-20 h-20" />;
+    return <div key={`${period}-${group}`} style={{ width: 'var(--element-size)', height: 'var(--element-size)' }} />;
   };
 
   const renderRow = (period) => {
@@ -63,10 +64,16 @@ function App() {
     );
   };
 
+  // Calculate element size based on viewport: 18 columns + 17 gaps (4px each) + padding (48px total)
+  // Using CSS custom property set via inline style
+  const tableStyle = {
+    '--element-size': 'clamp(40px, calc((100vw - 48px - 68px) / 18), 80px)',
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-1">Periodic Table of Elements</h1>
-      <p className="text-gray-500 mb-4 text-sm">Click an element to view details. Use filters to highlight categories.</p>
+    <div className="min-h-screen bg-gray-50 p-6" style={tableStyle}>
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Periodic Table of Elements</h1>
+      <p className="text-gray-500 mb-4 text-xs sm:text-sm">Click an element to view details. Use filters to highlight categories.</p>
 
       <div className="flex flex-wrap gap-2 mb-6">
         {categories.map(cat => (
@@ -84,11 +91,33 @@ function App() {
         ))}
       </div>
 
-      <div className="overflow-x-auto">
-        <div className="inline-block">
+      <div className="relative">
+        <div>
           <div className="flex flex-col gap-1">
             {[1, 2, 3, 4, 5, 6, 7].map(period => renderRow(period))}
           </div>
+
+          {selected && (
+            <div className="absolute top-0 bg-white p-4 rounded-lg shadow-lg z-20" style={{ left: 'calc(2 * var(--element-size) + 8px)', width: 'calc(10 * var(--element-size) + 36px)' }}>
+              <div className="flex justify-between items-start mb-2">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{selected.name}</h2>
+                <button
+                  onClick={() => setSelected(null)}
+                  className="text-gray-400 hover:text-gray-600 text-xl sm:text-2xl leading-none"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-700">
+                <p><span className="font-semibold">Symbol:</span> {selected.symbol}</p>
+                <p><span className="font-semibold">Atomic Number:</span> {selected.atomicNumber}</p>
+                <p><span className="font-semibold">Atomic Mass:</span> {selected.atomicMass}</p>
+                <p><span className="font-semibold">Category:</span> {selected.category.replace('-', ' ')}</p>
+                <p><span className="font-semibold">Period:</span> {selected.period}</p>
+                {selected.group && <p><span className="font-semibold">Group:</span> {selected.group}</p>}
+              </div>
+            </div>
+          )}
 
           <div className="mt-4 flex flex-col gap-1">
             <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Lanthanides (71)</div>
@@ -125,28 +154,6 @@ function App() {
           </div>
         </div>
       </div>
-
-      {selected && (
-        <div className="mt-8 bg-white p-6 rounded-lg shadow-lg max-w-md">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">{selected.name}</h2>
-            <button
-              onClick={() => setSelected(null)}
-              className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-            >
-              8957
-            </button>
-          </div>
-          <div className="space-y-2 text-gray-700">
-            <p><span className="font-semibold">Symbol:</span> {selected.symbol}</p>
-            <p><span className="font-semibold">Atomic Number:</span> {selected.atomicNumber}</p>
-            <p><span className="font-semibold">Atomic Mass:</span> {selected.atomicMass}</p>
-            <p><span className="font-semibold">Category:</span> {selected.category.replace('-', ' ')}</p>
-            <p><span className="font-semibold">Period:</span> {selected.period}</p>
-            {selected.group && <p><span className="font-semibold">Group:</span> {selected.group}</p>}
-          </div>
-        </div>
-      )}
 
       <div className="mt-8 bg-white p-6 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold mb-4 text-gray-900">Element Categories</h3>
