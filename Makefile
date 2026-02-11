@@ -1,4 +1,4 @@
-.PHONY: install build dev clean deploy help
+.PHONY: install build dev clean deploy help clean-emacs
 
 # Default target
 .DEFAULT_GOAL := help
@@ -16,6 +16,7 @@ help:
 	@echo "  make clean             - Remove build artifacts and dependencies"
 	@echo "  make lint              - Run linter"
 	@echo "  make format            - Format code"
+	@echo "  make clean-emacs       - Clean emacs temp files"
 
 install:
 	@echo "Installing dependencies..."
@@ -45,3 +46,6 @@ lint:
 format:
 	@echo "Formatting code..."
 	npm run format
+
+clean-emacs:    
+	find . -type f -name "*~" -delete
