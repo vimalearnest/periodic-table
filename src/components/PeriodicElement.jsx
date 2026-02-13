@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 
-const PeriodicElement = ({
+const PeriodicElement = forwardRef(({
   symbol,
   name,
   atomicNumber,
@@ -9,7 +9,7 @@ const PeriodicElement = ({
   highlighted = false,
   dimmed = false,
   onClick
-}) => {
+}, ref) => {
   const [isHovered, setIsHovered] = useState(false);
   
   const categoryColors = {
@@ -30,19 +30,30 @@ const PeriodicElement = ({
   
   return (
     <div
+      ref={ref}
+      tabIndex={0}
+      role="button"
+      aria-label={`${name}, atomic number ${atomicNumber}`}
       className={`
         relative border-2 ${colorClass}
         cursor-pointer transition-all duration-200
         ${isHovered ? 'scale-110 shadow-lg z-10' : 'shadow'}
-        ${highlighted ? 'ring-2 ring-blue-500 ring-offset-1' : ''}
+        ${highlighted ? 'border-blue-500 border-3' : ''}
         ${dimmed ? 'opacity-30' : ''}
         flex flex-col items-center justify-center
         rounded-sm overflow-hidden
+        focus:outline-none focus:ring-3 focus:ring-blue-600 focus:ring-offset-2 focus:scale-110 focus:shadow-lg focus:z-10
       `}
       style={{ width: 'var(--element-size)', height: 'var(--element-size)' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
     >
       <div className="absolute top-0 left-0.5 text-[0.5rem] sm:text-xs font-semibold text-gray-700">
         {atomicNumber}
@@ -68,6 +79,6 @@ const PeriodicElement = ({
       )}
     </div>
   );
-};
+});
 
 export default PeriodicElement;
