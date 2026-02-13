@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://codmonk.github.io/periodic-table/sitemap.xml
+Sitemap: https://www.codmonk.com/ptable/sitemap.xml
