@@ -119,20 +119,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6" style={tableStyle}>
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-1">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Periodic Table of Elements</h1>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search element..."
-          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-48"
-        />
-      </div>
-      <p className="text-gray-500 mb-4 text-xs sm:text-sm">Click an element to view details. Use filters to highlight categories.</p>
-
-      <div className="flex flex-wrap gap-2 mb-6">
+    <div className="min-h-screen bg-gray-50 px-6 pt-2 pb-6" style={tableStyle}>
+      <div className="flex flex-wrap items-center gap-2 mb-6">
         {categories.map(cat => (
           <button
             key={cat.key}
@@ -154,6 +142,15 @@ function App() {
           </button>
         ))}
       </div>
+      <div className="flex justify-end mb-4">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search element..."
+          className="px-3 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-40 sm:w-48"
+        />
+      </div>
 
       <div className="relative">
         <div>
@@ -163,63 +160,67 @@ function App() {
 
           {selected && (
             <div
-              className={`absolute top-0 p-2 rounded-lg shadow-lg z-20 border-2 ${categoryColors[selected.category]}`}
-              style={{ left: 'calc(5 * var(--element-size) + 16px)', top: 'calc(var(--element-size) + 4px)', backgroundColor: 'white' }}
+              className={`absolute top-0 p-3 rounded-lg shadow-lg z-20 border-2 ${categoryColors[selected.category]}`}
+              style={{ left: 'calc(5 * var(--element-size) + 16px)', top: '0px', backgroundColor: 'white' }}
             >
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-0.5 right-1.5 text-gray-400 hover:text-gray-600 text-sm leading-none"
-              >
-                ×
-              </button>
-              <div className="flex divide-x divide-gray-300">
-                <div className="pr-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className="text-2xl font-bold text-gray-900">{selected.symbol}</div>
+              <div className="flex divide-x divide-gray-300 gap-1">
+                <div className="pr-3">
+                  <div className="flex items-center gap-2">
+                    <div className="text-3xl font-bold text-gray-900">{selected.symbol}</div>
                     <div>
-                      <div className="text-xs font-semibold text-gray-900">{selected.name}</div>
-                      <div className="text-[0.6rem] text-gray-500 capitalize">{selected.category.replace('-', ' ')}</div>
+                      <div className="text-sm font-semibold text-gray-900">{selected.name}</div>
+                      <div className="text-xs text-gray-500 capitalize">{selected.category.replace('-', ' ')}</div>
                     </div>
                   </div>
-                  <div className="border-t border-gray-200 mt-1 pt-1 text-[0.6rem] text-gray-600 space-y-0.5">
+                  <div className="border-t border-gray-200 mt-2 pt-2 text-xs text-gray-600 space-y-1">
                     <div><span className="text-gray-400">Discovered</span> {selected.discovered || 'Ancient'}</div>
                     <div><span className="text-gray-400">Melting</span> {selected.meltingPoint != null ? `${selected.meltingPoint}°C` : '—'}</div>
                     <div><span className="text-gray-400">Boiling</span> {selected.boilingPoint != null ? `${selected.boilingPoint}°C` : '—'}</div>
                   </div>
-                  <div className="border-t border-gray-200 mt-1 pt-1">
+                  <div className="border-t border-gray-200 mt-2 pt-2">
                     <a
                       href={`https://en.wikipedia.org/wiki/${selected.name}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[0.6rem] text-blue-600 hover:underline"
+                      className="text-xs text-blue-600 hover:underline"
                     >
                       Wikipedia →
                     </a>
                   </div>
                 </div>
-                <div className="px-2 text-xs text-gray-700 flex flex-col justify-center gap-0.5">
-                  <div className="flex justify-between gap-3"><span className="text-gray-400">Atomic Number</span><span className="font-medium">{selected.atomicNumber}</span></div>
-                  <div className="flex justify-between gap-3"><span className="text-gray-400">Atomic Mass</span><span className="font-medium">{selected.atomicMass}</span></div>
-                  <div className="flex justify-between gap-3"><span className="text-gray-400">Period</span><span className="font-medium">{selected.period}</span></div>
-                  {selected.group && <div className="flex justify-between gap-3"><span className="text-gray-400">Group</span><span className="font-medium">{selected.group}</span></div>}
+                <div className="px-3 text-sm text-gray-700 flex flex-col justify-center gap-1">
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Atomic Number</span><span className="font-medium">{selected.atomicNumber}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Atomic Mass</span><span className="font-medium">{selected.atomicMass}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Period</span><span className="font-medium">{selected.period}</span></div>
+                  {selected.group && <div className="flex justify-between gap-4"><span className="text-gray-400">Group</span><span className="font-medium">{selected.group}</span></div>}
                 </div>
-                <div className="pl-2 text-xs">
-                  <div className="text-gray-400 text-[0.6rem]">Compounds</div>
-                  {commonCompounds[selected.symbol]?.length > 0 ? (
-                    <div className="text-gray-700 font-medium">
-                      {commonCompounds[selected.symbol].slice(0, 3).join(', ')}
+                <div className="pl-3 text-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-gray-400 text-xs">Compounds</div>
+                      {commonCompounds[selected.symbol]?.length > 0 ? (
+                        <div className="text-gray-700 font-medium">
+                          {commonCompounds[selected.symbol].slice(0, 3).join(', ')}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
                     </div>
-                  ) : (
-                    <span className="text-gray-400">—</span>
-                  )}
+                    <button
+                      onClick={() => setSelected(null)}
+                      className="text-gray-400 hover:text-gray-600 text-base leading-none"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           <div ref={lanthanidesRef} className="mt-4 flex flex-col gap-1">
-            <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Lanthanides (71)</div>
-            <div className="flex gap-1">
+            <div className="flex items-center gap-1">
+              <div className="text-xs text-gray-500 font-semibold mr-2 w-[4.5rem]">Lanthanides</div>
               {lanthanides.filter(el => isVisible(el)).map(el => (
                 <PeriodicElement
                   key={el.atomicNumber}
@@ -236,9 +237,9 @@ function App() {
             </div>
           </div>
 
-          <div className="mt-2 flex flex-col gap-1">
-            <div className="text-xs text-gray-500 font-semibold mb-1 ml-1">Actinides (103)</div>
-            <div className="flex gap-1">
+          <div className="mt-1 flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+              <div className="text-xs text-gray-500 font-semibold mr-2 w-[4.5rem]">Actinides</div>
               {actinides.filter(el => isVisible(el)).map(el => (
                 <PeriodicElement
                   key={el.atomicNumber}
