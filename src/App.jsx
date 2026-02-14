@@ -37,6 +37,7 @@ function App() {
   };
 
   const isVisible = (el) => filter === 'all' || el.category === filter;
+  const isFilterDimmed = (el) => filter !== 'all' && el.category !== filter;
 
   // Check if there are search matches below the viewport
   useEffect(() => {
@@ -337,7 +338,7 @@ function App() {
       );
     }
 
-    if (el && isVisible(el)) {
+    if (el) {
       return (
         <PeriodicElement
           key={el.atomicNumber}
@@ -348,7 +349,7 @@ function App() {
           atomicMass={el.atomicMass}
           category={el.category}
           highlighted={isHighlighted(el)}
-          dimmed={search.trim() && !matchesSearch(el)}
+          dimmed={isFilterDimmed(el) || (search.trim() && !matchesSearch(el))}
           onClick={() => setSelected(el)}
         />
       );
@@ -520,14 +521,19 @@ function App() {
                   <div className="flex justify-between gap-4"><span className="text-gray-400">Atomic Mass</span><span className="font-medium">{selected.atomicMass}</span></div>
                   <div className="flex justify-between gap-4"><span className="text-gray-400">Period</span><span className="font-medium">{selected.period}</span></div>
                   {selected.group && <div className="flex justify-between gap-4"><span className="text-gray-400">Group</span><span className="font-medium">{selected.group}</span></div>}
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Density</span><span className="font-medium">{selected.density != null ? `${selected.density} g/cm³` : '—'}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Color</span><span className="font-medium">{selected.color || '—'}</span></div>
+                  <div className="flex justify-between gap-4"><span className="text-gray-400">Bio Role</span><span className="font-medium">{selected.bioRole || '—'}</span></div>
                 </div>
                 <div className="pl-3 text-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="text-gray-400 text-xs">Compounds</div>
                       {commonCompounds[selected.symbol]?.length > 0 ? (
-                        <div className="text-gray-700 font-medium">
-                          {commonCompounds[selected.symbol].slice(0, 3).join(', ')}
+                        <div className="text-gray-700 font-medium space-y-0.5">
+                          {commonCompounds[selected.symbol].slice(0, 3).map((c, i) => (
+                            <div key={i}>{c}</div>
+                          ))}
                         </div>
                       ) : (
                         <span className="text-gray-400">—</span>
@@ -548,7 +554,7 @@ function App() {
           <div ref={lanthanidesRef} className="mt-4 flex flex-col gap-1">
             <div className="flex items-center gap-1">
               <div className="text-xs text-gray-500 font-semibold mr-2 w-[4.5rem]">Lanthanides</div>
-              {lanthanides.filter(el => isVisible(el)).map(el => (
+              {lanthanides.map(el => (
                 <PeriodicElement
                   key={el.atomicNumber}
                   ref={(node) => setElementRef(el.atomicNumber, node)}
@@ -558,7 +564,7 @@ function App() {
                   atomicMass={el.atomicMass}
                   category={el.category}
                   highlighted={isHighlighted(el)}
-                  dimmed={search.trim() && !matchesSearch(el)}
+                  dimmed={isFilterDimmed(el) || (search.trim() && !matchesSearch(el))}
                   onClick={() => setSelected(el)}
                 />
               ))}
@@ -568,7 +574,7 @@ function App() {
           <div className="mt-1 flex flex-col gap-1">
             <div className="flex items-center gap-1">
               <div className="text-xs text-gray-500 font-semibold mr-2 w-[4.5rem]">Actinides</div>
-              {actinides.filter(el => isVisible(el)).map(el => (
+              {actinides.map(el => (
                 <PeriodicElement
                   key={el.atomicNumber}
                   ref={(node) => setElementRef(el.atomicNumber, node)}
@@ -578,7 +584,7 @@ function App() {
                   atomicMass={el.atomicMass}
                   category={el.category}
                   highlighted={isHighlighted(el)}
-                  dimmed={search.trim() && !matchesSearch(el)}
+                  dimmed={isFilterDimmed(el) || (search.trim() && !matchesSearch(el))}
                   onClick={() => setSelected(el)}
                 />
               ))}
